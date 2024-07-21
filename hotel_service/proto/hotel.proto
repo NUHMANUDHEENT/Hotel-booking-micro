@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package hotel;
+
+option go_package = "hotel_service/hotel_proto;proto";
+
+service HotelService {
+  rpc AddRoom(AddRoomRequest) returns (AddRoomResponse);
+  rpc GetRoom(GetRoomRequest) returns (GetRoomResponse);
+  rpc UpdateRoom(UpdateRoomRequest) returns (UpdateRoomResponse);
+  rpc DeleteRoom(DeleteRoomRequest) returns (DeleteRoomResponse);
+  rpc GetRooms(GetRoomsRequest) returns (GetRoomsResponse);
+}
+
+message Room {
+  string room_number = 1;
+  string category = 2;
+  bool availability = 3;
+  double price = 4;
+}
+
+message AddRoomRequest {
+  Room room = 1;
+}
+
+message AddRoomResponse {
+  string message = 1;
+}
+
+message GetRoomRequest {
+  string room_number = 1;
+}
+
+message GetRoomResponse {
+  Room room = 1;
+}
+
+message UpdateRoomRequest {
+  Room room = 1;
+}
+
+message UpdateRoomResponse {
+  string message = 1;
+}
+
+message DeleteRoomRequest {
+  string room_number = 1;
+}
+
+message DeleteRoomResponse {
+  string message = 1;
+}
+message GetRoomsRequest {}
+
+message GetRoomsResponse {
+  repeated Room rooms = 1;
+  }

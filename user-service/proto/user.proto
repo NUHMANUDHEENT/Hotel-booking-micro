@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package user_service;
+
+option go_package = "user-service/proto;proto";
+
+message User {
+    uint32 id = 1;
+    string name = 2;
+    string email = 3;
+    string password = 4;
+    string mobile = 5;
+}
+
+message RegisterUserRequest {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+    string mobile = 4;
+}
+
+message RegisterUserResponse {
+    string message = 1;
+}
+
+message LoginUserRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginUserResponse {
+    string message = 1;
+    string jwt_token = 2;
+}
+
+message UserGetInfoRequest {}
+
+message UserGetInfoResponse {
+    User user = 1;
+}
+
+message GetHotelRoomsRequest {}
+
+message Room {
+    string room_number = 1;
+    string category = 2;
+    bool availability = 3;
+    double price = 4;
+  }
+
+message GetHotelRoomsResponse {
+    repeated Room rooms = 1;
+}
+
+service UserService {
+    rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
+    rpc LoginUser (LoginUserRequest) returns (LoginUserResponse);
+    rpc UserGetInfo (UserGetInfoRequest) returns (UserGetInfoResponse);
+    rpc GetHotelRooms (GetHotelRoomsRequest) returns (GetHotelRoomsResponse);
+}
