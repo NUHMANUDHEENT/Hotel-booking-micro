@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package hotel;
+package hotel_service;
 
 option go_package = "hotel_service/hotel_proto;proto";
 
@@ -10,6 +10,7 @@ service HotelService {
   rpc UpdateRoom(UpdateRoomRequest) returns (UpdateRoomResponse);
   rpc DeleteRoom(DeleteRoomRequest) returns (DeleteRoomResponse);
   rpc GetRooms(GetRoomsRequest) returns (GetRoomsResponse);
+  rpc CheckRoom (CheckRoomRequest) returns (CheckRoomResponse);
 }
 
 message Room {
@@ -54,4 +55,12 @@ message GetRoomsRequest {}
 
 message GetRoomsResponse {
   repeated Room rooms = 1;
-  }
+}
+
+message CheckRoomRequest {
+  string room_id = 1;
+}
+  
+message CheckRoomResponse {
+   bool available = 1;
+}

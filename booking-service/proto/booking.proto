@@ -3,14 +3,28 @@ syntax = "proto3";
 package  booking_service;
 
 option go_package = "booking_service/proto;proto";
+import "google/protobuf/timestamp.proto";
 
 service BookingService {
-    rpc RoomBooking(RoomBookingRequest) returns (RoomBookingResponse);
+    rpc CreateBooking (CreateBookingRequest) returns (CreateBookingResponse);
+    rpc BookingComplete(BookingCompleteRequest) returns (BookingCompleteResponse);
+ }
+
+message CreateBookingRequest {
+    uint32 room_id = 1;
+    google.protobuf.Timestamp check_in = 2;
+    google.protobuf.Timestamp check_out = 3;
+    float amount = 4;
 }
 
-message RoomBookingRequest{
-    string room_number =1;
+ message CreateBookingResponse {
+    uint32 booking_id = 1;
+    string status = 2;
 }
-message RoomBookingResponse{
-    string payment_id = 1;
+message BookingCompleteRequest {
+  string order_id = 1;
+  string status = 2;
 }
+message BookingCompleteResponse {
+ bool status = 1;
+ }

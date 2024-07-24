@@ -21,6 +21,7 @@ type UserServiceClient interface {
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	UserGetInfo(ctx context.Context, in *UserGetInfoRequest, opts ...grpc.CallOption) (*UserGetInfoResponse, error)
 	GetHotelRooms(ctx context.Context, in *GetHotelRoomsRequest, opts ...grpc.CallOption) (*GetHotelRoomsResponse, error)
+	CheckUser(ctx context.Context, in *CheckUserRequest, opts ...grpc.CallOption) (*CheckUserResponse, error)
 }
 
 type userServiceClient struct {
@@ -67,6 +68,15 @@ func (c *userServiceClient) GetHotelRooms(ctx context.Context, in *GetHotelRooms
 	return out, nil
 }
 
+func (c *userServiceClient) CheckUser(ctx context.Context, in *CheckUserRequest, opts ...grpc.CallOption) (*CheckUserResponse, error) {
+	out := new(CheckUserResponse)
+	err := c.cc.Invoke(ctx, "/user_service.UserService/CheckUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -75,6 +85,7 @@ type UserServiceServer interface {
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	UserGetInfo(context.Context, *UserGetInfoRequest) (*UserGetInfoResponse, error)
 	GetHotelRooms(context.Context, *GetHotelRoomsRequest) (*GetHotelRoomsResponse, error)
+	CheckUser(context.Context, *CheckUserRequest) (*CheckUserResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -93,6 +104,9 @@ func (UnimplementedUserServiceServer) UserGetInfo(context.Context, *UserGetInfoR
 }
 func (UnimplementedUserServiceServer) GetHotelRooms(context.Context, *GetHotelRoomsRequest) (*GetHotelRoomsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHotelRooms not implemented")
+}
+func (UnimplementedUserServiceServer) CheckUser(context.Context, *CheckUserRequest) (*CheckUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckUser not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -179,6 +193,24 @@ func _UserService_GetHotelRooms_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_CheckUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CheckUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user_service.UserService/CheckUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CheckUser(ctx, req.(*CheckUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _UserService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "user_service.UserService",
 	HandlerType: (*UserServiceServer)(nil),
@@ -198,6 +230,10 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHotelRooms",
 			Handler:    _UserService_GetHotelRooms_Handler,
+		},
+		{
+			MethodName: "CheckUser",
+			Handler:    _UserService_CheckUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

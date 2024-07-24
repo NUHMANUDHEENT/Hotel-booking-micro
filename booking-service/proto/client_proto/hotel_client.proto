@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package hotel_service;
+
+option go_package = "hotel_service/proto/client_proto;proto";
+
+service HotelService {
+    rpc CheckRoom (CheckRoomRequest) returns (CheckRoomResponse);
+}
+
+message CheckRoomRequest {
+    string room_id = 1;
+  }
+    
+  message CheckRoomResponse {
+     bool available = 1;
+  }

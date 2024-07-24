@@ -10,7 +10,8 @@ type HotelService interface {
 	GetRoom(roomNumber string) (domain.Room, error)
 	UpdateRoom(room domain.Room) error
 	DeleteRoom(roomNumber string) error
-	GetRooms() ([]domain.Room, error) // Add this line
+	GetRooms() ([]domain.Room, error)
+	RoomAvailable(roomID string) bool
 }
 
 type hotelService struct {
@@ -39,4 +40,7 @@ func (s *hotelService) DeleteRoom(roomNumber string) error {
 
 func (s *hotelService) GetRooms() ([]domain.Room, error) { // Implement this function
 	return s.repo.GetRooms()
+}
+func (s *hotelService) RoomAvailable(roomID string) bool {
+	return s.repo.RoomAvailable(roomID)
 }

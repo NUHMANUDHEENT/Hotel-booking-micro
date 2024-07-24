@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/nuhmanudheent/hotel-booking/user-service/internal/service"
 	pb "github.com/nuhmanudheent/hotel-booking/user-service/proto"
@@ -60,7 +61,7 @@ func (u *UserHandler) GetHotelRooms(ctx context.Context, req *pb.GetHotelRoomsRe
 	var pbRooms []*pb.Room
 	for _, room := range rooms {
 		pbRooms = append(pbRooms, &pb.Room{
-			RoomNumber:           room.RoomNumber,
+			RoomNumber:   room.RoomNumber,
 			Category:     room.Category,
 			Availability: room.Availability,
 			Price:        room.Price,
@@ -68,4 +69,9 @@ func (u *UserHandler) GetHotelRooms(ctx context.Context, req *pb.GetHotelRoomsRe
 	}
 
 	return &pb.GetHotelRoomsResponse{Rooms: pbRooms}, nil
+}
+func (u *UserHandler) CheckUser(ctx context.Context, req *pb.CheckUserRequest) (*pb.CheckUserResponse, error) {
+	fmt.Println("user check")
+	exists := u.service.UserExists(req.UserId)
+	return &pb.CheckUserResponse{Exists: exists}, nil
 }

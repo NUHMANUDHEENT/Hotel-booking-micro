@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+
 	"github.com/nuhmanudheent/hotel_booking/hotel_service/internal/domain"
 	"github.com/nuhmanudheent/hotel_booking/hotel_service/internal/service"
 	pb "github.com/nuhmanudheent/hotel_booking/hotel_service/proto"
@@ -84,4 +85,9 @@ func (h *HotelHandler) GetRooms(ctx context.Context, req *pb.GetRoomsRequest) (*
 	}
 
 	return &pb.GetRoomsResponse{Rooms: pbRooms}, nil
+}
+
+func (h *HotelHandler) CheckRoom(ctx context.Context, req *pb.CheckRoomRequest) (*pb.CheckRoomResponse, error) {
+	available := h.service.RoomAvailable(req.RoomId)
+	return &pb.CheckRoomResponse{Available: available}, nil
 }

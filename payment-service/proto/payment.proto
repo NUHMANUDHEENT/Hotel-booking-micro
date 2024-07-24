@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package payment_service;
+
+option go_package = "payment_service/proto:proto";
+
+service PaymentService {
+    rpc PaymentCheck(PaymentCheckRequest) returns (PaymentCheckResponse);
+    rpc NewOrder(NewOrderRequest) returns (NewOrderResponse);
+}
+
+message PaymentCheckRequest{
+    string order_id = 1;
+}
+message PaymentCheckResponse{
+    string status = 1;
+}
+message NewOrderRequest{
+    string order_id = 1;
+    uint32 price = 2;
+}
+message NewOrderResponse{
+    string razor_order_id = 1;
+}

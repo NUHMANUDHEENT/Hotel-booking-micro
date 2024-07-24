@@ -11,6 +11,7 @@ type UserRepository interface {
 	RegisterUser(user domain.User) error
 	FindByEmail(email string) (domain.User, error)
 	FindByID(id uint) (domain.User, error)
+	CheckUser(userID uint32) bool
 }
 
 type userRepository struct {
@@ -42,4 +43,11 @@ func (u *userRepository) FindByID(id uint) (domain.User, error) {
 		return domain.User{}, errors.New("user not found")
 	}
 	return user, nil
+}
+func (u *userRepository) CheckUser(userID uint32) bool {
+	var user domain.User
+	if err := u.db.First(&user, userID).Error; err != nil {
+		return false
+	}
+	return true
 }

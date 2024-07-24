@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package user_service;
+
+option  go_package = "user-service/proto/client_proto;proto";
+
+service UserService {
+  rpc CheckUser (CheckUserRequest) returns (CheckUserResponse);
+}
+
+message CheckUserRequest {
+  uint32 user_id = 1;
+}
+
+message CheckUserResponse {
+  bool exists = 1;
+}

@@ -22,6 +22,7 @@ type UserService interface {
 	LoginUser(email, password string) (string, error)
 	UserGetInfo(id uint) (domain.User, error)
 	GetHotelRooms() ([]*hotel_service.Room, error)
+	UserExists(userID uint32) bool
 }
 
 type userService struct {
@@ -87,4 +88,7 @@ func (u *userService) GetHotelRooms() ([]*hotel_service.Room, error) {
 		return nil, err
 	}
 	return resp.Rooms, nil
+}
+func (s *userService) UserExists(userID uint32) bool {
+	return s.repo.CheckUser(userID)
 }

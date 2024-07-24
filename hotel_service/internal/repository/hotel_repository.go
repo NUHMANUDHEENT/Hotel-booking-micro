@@ -12,7 +12,8 @@ type RoomRepository interface {
 	GetRoom(roomNumber string) (domain.Room, error)
 	UpdateRoom(room domain.Room) error
 	DeleteRoom(roomNumber string) error
-	GetRooms() ([]domain.Room, error) // Add this line
+	GetRooms() ([]domain.Room, error) 
+	RoomAvailable(roomID string)bool
 }
 
 type roomRepository struct {
@@ -58,4 +59,11 @@ func (r *roomRepository) GetRooms() ([]domain.Room, error) { // Add this functio
 		return nil, errors.New("failed to get rooms")
 	}
 	return rooms, nil
+}
+func (r *roomRepository) RoomAvailable(roomID string) bool {
+	var room domain.Room
+	if err := r.db.Where("availability = ?", true).First(&room, "room_number = ?", roomID).Error; err != nil {
+		return false
+	}
+	return true
 }

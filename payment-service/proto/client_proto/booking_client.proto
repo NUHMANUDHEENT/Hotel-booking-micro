@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package  booking_service;
+
+option go_package = "booking_service/proto;proto";
+
+service BookingService{
+    rpc BookingComplete(BookingCompleteRequest) returns (BookingCompleteResponse);
+}
+message BookingCompleteRequest {
+    string order_id = 1;
+    string status = 2;
+  }
+  message BookingCompleteResponse {
+   bool status = 1;
+   }

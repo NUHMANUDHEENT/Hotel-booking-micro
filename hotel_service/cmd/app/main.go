@@ -17,28 +17,24 @@ import (
 
 func main() {
 
-  db := postgres.InitDatabase()
+	db := postgres.InitDatabase()
 	roomRepo := repository.NewRoomRepository(db)
 	hotelService := service.NewHotelService(roomRepo)
 
-	// Set up HTTP server
 	r := gin.Default()
 	httpHandler := httpHandler.NewHotelHandler(hotelService)
 	httpHandler.HotelRouters(r)
 
-	// Set up gRPC server
 	grpcServer := grpc.NewServer()
 	grpcHandler := grpcHandler.NewHotelHandler(hotelService)
 	pb.RegisterHotelServiceServer(grpcServer, grpcHandler)
 
-	// Start HTTP server
 	go func() {
 		if err := r.Run(":8082"); err != nil {
 			log.Fatalf("failed to run HTTP server: %v", err)
 		}
 	}()
 
-	// Start gRPC server
 	lis, err := net.Listen("tcp", ":50042")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
