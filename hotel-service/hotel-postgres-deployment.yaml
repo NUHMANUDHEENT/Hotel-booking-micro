@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hotel-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hotel-db
+  template:
+    metadata:
+      labels:
+        app: hotel-db
+    spec:
+      containers:
+      - name: hotel-db
+        image: postgres:latest
+        env:
+        - name: POSTGRES_USER
+          value: microservice-project
+        - name: POSTGRES_PASSWORD
+          value: Nuhman@456
+        - name: POSTGRES_DB
+          value: hotel_db
+        ports:
+        - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hotel-db
+spec:
+  selector:
+    app: hotel-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

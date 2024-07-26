@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -12,6 +13,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/nuhmanudheent/hotel-booking/user-service/internal/domain"
 	"github.com/nuhmanudheent/hotel-booking/user-service/internal/repository"
+	"github.com/sirupsen/logrus"
 
 	middleware "github.com/nuhmanudheent/hotel-booking/user-service/pkg/middlerware-http"
 	hotel_service "github.com/nuhmanudheent/hotel-booking/user-service/proto/client_proto"
@@ -82,13 +84,37 @@ func (u *userService) UserGetInfo(id uint) (domain.User, error) {
 	return user, nil
 }
 func (u *userService) GetHotelRooms() ([]*hotel_service.Room, error) {
+	log.Println("Starting GetHotelRooms function")
 	req := &hotel_service.GetRoomsRequest{}
+	log.Println("Created GetRoomsRequest")
+
+	start := time.Now()
 	resp, err := u.hotelClient.GetRooms(context.Background(), req)
 	if err != nil {
+		log.Printf("Error calling GetRooms: %v\n", err)
 		return nil, err
 	}
+	duration := time.Since(start)
+	log.Printf("Received response from GetRooms: %v rooms found in %v\n", len(resp.Rooms), duration)
 	return resp.Rooms, nil
+
 }
 func (s *userService) UserExists(userID uint32) bool {
-	return s.repo.CheckUser(userID)
+	logrus.WithFields(logrus.Fields{
+		"userID": userID,
+	}).Info("Checking user")
+
+	check := s.repo.CheckUser(userID)
+	if !check {
+		logrus.WithFields(logrus.Fields{
+			"userID": userID,
+			"status": check,
+		}).Error("User not found")
+		return false
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"userID": userID,
+	}).Info("User found")
+	return true
 }

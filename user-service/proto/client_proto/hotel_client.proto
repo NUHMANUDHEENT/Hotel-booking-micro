@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package hotel_service;
+
+option go_package = "hotel_service/proto;proto";
+
+message Room {
+    string room_number = 1;
+    string category = 2;
+    bool availability = 3;
+    double price = 4;
+  }
+
+message GetRoomsRequest {}
+
+message GetRoomsResponse {
+    repeated Room rooms = 1;
+}
+
+service HotelService {
+    rpc GetRooms (GetRoomsRequest) returns (GetRoomsResponse);
+}

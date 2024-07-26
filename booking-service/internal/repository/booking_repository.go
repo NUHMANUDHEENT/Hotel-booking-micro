@@ -11,6 +11,7 @@ type BookingRepository interface {
 	CreateBooking(booking *domain.Booking) error
 	UpdateBooking(booking *domain.Booking) error
 	GetBookingByID(id uint) (*domain.Booking, error)
+	BookingComplete(razorId string, status string) (string, error)
 }
 
 type bookingRepository struct {
@@ -44,4 +45,18 @@ func (r *bookingRepository) GetBookingByID(id uint) (*domain.Booking, error) {
 		return nil, err
 	}
 	return &booking, nil
+}
+func (b *bookingRepository) BookingComplete(razorId string, status string) (string, error) {
+	var booking domain.Booking
+	if err := b.db.Where("razor_order_id = ?", razorId).First(&booking).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return "Booking not found", err
+		}
+		return "", err
+	}
+	booking.Status = status
+	if err := b.db.Save(&booking).Error; err != nil {
+		return "", err
+	}
+	return "success", nil
 }

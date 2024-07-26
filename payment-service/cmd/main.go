@@ -49,10 +49,8 @@ func main() {
 	httpHandler := httphandler.NewPaymentHandler(paymentService)
 	httpHandler.RegisterRoutes(r)
 
-	// Load HTML templates
 	r.LoadHTMLGlob("/home/nuhmanudheen-t/Desktop/go-microservice-hotel-booking/payment-service/templates/*")
 
-	// Run the Gin server
 	go func() {
 		if err := r.Run(":8084"); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)

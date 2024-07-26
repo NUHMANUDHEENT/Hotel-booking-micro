@@ -1,6 +1,10 @@
 package service
 
 import (
+	"context"
+	"fmt"
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nuhmanudheent/hotel-booking/payment-service/internal/repository"
 	client_pb "github.com/nuhmanudheent/hotel-booking/payment-service/proto/client_proto"
@@ -26,10 +30,18 @@ func (p *paymentService) PaymentComplete(c *gin.Context) {
 	p.repo.PaymentComplete(c)
 }
 func (p *paymentService) PaymentConfirmation(c *gin.Context) {
-	check := p.repo.PaymentConfirmation(c)
-	if check{
-		p.BookingService.BookingComplete()
+	razorId, status := p.repo.PaymentConfirmation(c)
+	if status != "success" {
+		log.Fatal("Payment failed")
 	}
+	resp, err := p.BookingService.BookingComplete(context.Background(), &client_pb.BookingCompleteRequest{
+		OrderId: razorId,
+		Status:  status,
+	})
+	if err != nil {
+		log.Fatal("failed to update booking data")
+	}
+	fmt.Println("Payment ccomplete", resp.Status)
 }
 func (p *paymentService) PaymentCheck(orderId string) (string, error) {
 	return p.repo.PaymentCheck(orderId)

@@ -1,6 +1,8 @@
 package grpc
 
 import (
+	"context"
+
 	"github.com/nuhmanudheent/hotel-booking/booking-service/internal/service"
 	pb "github.com/nuhmanudheent/hotel-booking/booking-service/proto"
 )
@@ -12,6 +14,12 @@ type BookingHandler struct {
 
 func NewBookingHandler(service service.BookingService) *BookingHandler {
 	return &BookingHandler{service: service}
+}
+
+func (b *BookingHandler) BookingComplete(ctx context.Context, req *pb.BookingCompleteRequest) (*pb.BookingCompleteResponse, error) {
+	status, err := b.service.BookingComplete(req.OrderId, req.Status)
+	return &pb.BookingCompleteResponse{Status: status}, err
+
 }
 
 // func (h *BookingHandler) CreateBooking(ctx context.Context, req *pb.CreateBookingRequest) (*pb.CreateBookingResponse, error) {

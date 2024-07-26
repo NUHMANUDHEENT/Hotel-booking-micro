@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	grpchandle "github.com/nuhmanudheent/hotel-booking/user-service/internal/delivery/grpc"
 	httphandle "github.com/nuhmanudheent/hotel-booking/user-service/internal/delivery/http"
 	"github.com/nuhmanudheent/hotel-booking/user-service/internal/repository"
@@ -16,6 +17,7 @@ import (
 	grpc_middle "github.com/nuhmanudheent/hotel-booking/user-service/pkg/middleware-grpc"
 	"github.com/nuhmanudheent/hotel-booking/user-service/pkg/postgres"
 	pb "github.com/nuhmanudheent/hotel-booking/user-service/proto"
+	logs "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
@@ -23,7 +25,20 @@ var (
 	port = ":50041"
 )
 
+func init() {
+	err := godotenv.Load("/home/nuhmanudheen-t/Desktop/go-microservice-hotel-booking/user-service/.env")
+	if err != nil {
+		log.Println("No .env file found")
+	}
+	logs.SetOutput(os.Stdout)
+
+	logs.SetLevel(logs.InfoLevel)
+
+	logs.SetFormatter(&logs.JSONFormatter{})
+}
+
 func main() {
+	log.Println("Starting application...")
 	conn, err := grpc.NewClient("localhost:50042", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -39,7 +54,6 @@ func main() {
 	secureMethods := map[string]bool{
 		"/proto.UserService/UserGetInfo":   true,
 		"/proto.UserService/GetHotelRooms": true,
-		// Add other methods that require authentication
 	}
 
 	go func() {

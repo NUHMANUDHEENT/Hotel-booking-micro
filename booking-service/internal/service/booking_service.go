@@ -13,6 +13,7 @@ import (
 
 type BookingService interface {
 	CreateBooking(userID uint32, roomID string, checkIn, checkOut time.Time, amount float64) (*domain.Booking, error)
+	BookingComplete(razorId string, status string) (bool, error)
 }
 
 type bookingService struct {
@@ -41,7 +42,7 @@ func (s *bookingService) CreateBooking(userID uint32, roomID string, checkIn, ch
 	if err != nil || !room.Available {
 		return nil, fmt.Errorf("room is not available: %v", err)
 	}
-	
+
 	orderID := uuid.New().String()[:5]
 	// Process payment
 	paymentResp, err := s.paymentService.NewOrder(context.Background(), &client_pb.NewOrderRequest{
@@ -56,16 +57,25 @@ func (s *bookingService) CreateBooking(userID uint32, roomID string, checkIn, ch
 		UserID:       uint(userID),
 		RoomID:       roomID,
 		CheckIn:      checkIn,
-		CheckOut:     checkOut,	
+		CheckOut:     checkOut,
 		Amount:       amount,
 		Status:       "Pending",
 		OrderId:      orderID,
 		RazorOrderId: paymentResp.RazorOrderId,
 	}
-	
+
 	if err := s.repo.CreateBooking(booking); err != nil {
 		return nil, fmt.Errorf("failed to create booking: %v", err)
 	}
 
 	return booking, nil
+}
+func (b *bookingService) BookingComplete(razorId string, status string) (bool, error) {
+	// Process payment
+	status, err := b.repo.BookingComplete(razorId, status)
+	if err != nil {
+		return false, fmt.Errorf("failed to complete booking: %v", err)
+	}
+	return true, nil
+
 }

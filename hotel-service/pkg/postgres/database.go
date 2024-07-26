@@ -4,10 +4,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/nuhmanudheent/hotel-booking/payment-service/internal/domain"
+	"github.com/nuhmanudheent/hotel_booking/hotel-service/internal/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+var DB *gorm.DB
 
 func InitDatabase() *gorm.DB {
 	dsn := os.Getenv("DATABASE_URL")
@@ -18,6 +20,6 @@ func InitDatabase() *gorm.DB {
 	if err != nil {
 		log.Fatal("failed to connect with postgres......")
 	}
-	db.AutoMigrate(domain.PaymentDetails{})
+	db.AutoMigrate(domain.Room{})
 	return db
 }
